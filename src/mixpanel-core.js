@@ -99,6 +99,7 @@ var DEFAULT_CONFIG = {
     'api_host':                          'https://api-js.mixpanel.com',
     'api_routes':                        DEFAULT_API_ROUTES,
     'api_extra_query_params':            {},
+    'authentication_provider':           NOOP_FUNC,
     'api_method':                        'POST',
     'api_transport':                     'XHR',
     'api_payload_format':                PAYLOAD_TYPE_BASE64,
@@ -673,7 +674,6 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
     }
 
     _.extend(data, this.get_config('api_extra_query_params'));
-
     url += '?' + _.HTTPBuildQuery(data);
 
     var lib = this;
@@ -704,6 +704,15 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
             if (use_post) {
                 headers['Content-Type'] = 'application/x-www-form-urlencoded';
             }
+
+            var authorizationProvider = this.get_config('authentication_provider');
+            if (authorizationProvider != NOOP_FUNC) {
+                var authorizationToken = authorizationProvider();
+                if (authorizationToken) {
+                    headers["Authorization"] = authorizationToken;
+                }
+            }
+
             _.each(headers, function(headerValue, headerName) {
                 req.setRequestHeader(headerName, headerValue);
             });
