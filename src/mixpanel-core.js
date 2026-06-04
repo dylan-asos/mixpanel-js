@@ -60,6 +60,7 @@ var INIT_SNIPPET = 1;
 /** @const */ var PAYLOAD_TYPE_BASE64   = 'base64';
 /** @const */ var PAYLOAD_TYPE_JSON     = 'json';
 /** @const */ var DEVICE_ID_PREFIX      = '$device:';
+/** @const */ var UUID_FORMAT           = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /** @const */ var SETTING_STRICT        = 'strict';
 /** @const */ var SETTING_FALLBACK      = 'fallback';
 /** @const */ var SETTING_DISABLED      = 'disabled';
@@ -92,6 +93,10 @@ var DEFAULT_API_ROUTES = {
     'record': 'record/',
     'flags':  'flags/',
     'settings': 'settings/'
+};
+
+var isValidUUID = function(value) {
+    return _.isString(value) && UUID_FORMAT.test(value);
 };
 
 /*
@@ -393,6 +398,11 @@ MixpanelLib.prototype._init = function(token, config, name) {
     this._gdpr_init();
 
     var device_id = this.get_config('device_id');
+    if (device_id && !isValidUUID(device_id)) {
+        this.report_error('device_id must be a valid UUID');
+        device_id = null;
+    }
+
     if (device_id) {
         this.register({
             'distinct_id': DEVICE_ID_PREFIX + device_id,
