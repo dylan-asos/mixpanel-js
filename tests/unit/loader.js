@@ -5,6 +5,7 @@
  * currently not supported in the browser lib).
  */
 
+import { expect } from 'chai';
 import mixpanel from '../../src/loaders/loader-module';
 
 describe(`Module-based loader in Node env`, function() {
@@ -24,8 +25,8 @@ describe(`Module-based loader in Node env`, function() {
       device_id: `server-device-id`,
     }, `device-id-test-instance`);
 
-    instance.get_property(`$device_id`).should.equal(`server-device-id`);
-    instance.get_distinct_id().should.equal(`$device:server-device-id`);
+    expect(instance.get_property(`$device_id`)).to.equal(`server-device-id`);
+    expect(instance.get_distinct_id()).to.equal(`$device:server-device-id`);
   });
 
   it(`supports identify()`, function() {
