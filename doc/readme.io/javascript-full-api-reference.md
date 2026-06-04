@@ -286,9 +286,9 @@ mixpanel.library_name.track(...);
 
 In normal operation, let the Mixpanel SDK manage device identifiers automatically. If you provide <code>config.device_id</code> to <code>mixpanel.init()</code>, it must be a UUID string (for example, <code>2f4c8f60-4f8e-4b22-9f95-1ac6a7340ec4</code>).
 
-Manual <code>device_id</code> configuration can help in environments where browser persistence is impacted by Safari ITP, which can reset client-side storage and cause new identifiers to be generated. That can inflate hourly user counts. If you provide <code>device_id</code>, make sure it comes from a server-side cookie value that is not subject to the same ITP restrictions.
+Manual <code>device_id</code> configuration can help in environments where browser persistence is impacted by ITP, which can reset client-side storage and cause new identifiers to be generated, which in turn  can inflate user counts. If you provide <code>device_id</code>, make sure it comes from a server-side value that is not subject to the same restrictions, and is stable per-user.
 
-
+This might your own understanding of `device_id` or other unique identifier, but not an actual signed in user id. This allows you to stabalise the device_id and distinct_id values for unauthenticated users
 
 
 | Argument | Type | Description |
