@@ -284,7 +284,11 @@ and use it like so:
 mixpanel.library_name.track(...);
 ```
 
+In normal operation, let the Mixpanel SDK manage device identifiers automatically. If you provide <code>config.device_id</code> to <code>mixpanel.init()</code>, it must be a UUID string (for example, <code>2f4c8f60-4f8e-4b22-9f95-1ac6a7340ec4</code>).
 
+Manual <code>device_id</code> configuration can help in environments where browser persistence is impacted by ITP, which can reset client-side storage and cause new identifiers to be generated, which in turn  can inflate user counts. If you provide <code>device_id</code>, make sure it comes from a server-side value that is not subject to the same restrictions, and is stable per-user.
+
+This might your own understanding of `device_id` or other unique identifier, but not an actual signed in user id. This allows you to stabalise the device_id and distinct_id values for unauthenticated users
 
 
 | Argument | Type | Description |
@@ -1204,6 +1208,4 @@ mixpanel.get_group('company', 'mixpanel').unset('Founded');
 | ------------- | ------------- | ----- |
 | **prop** | <span class="mp-arg-type">String</span></br></span><span class="mp-arg-required">required</span> | The name of the property. |
 | **callback** | <span class="mp-arg-type">Function</span></br></span><span class="mp-arg-optional">optional</span> | If provided, the callback will be called after the tracking event |
-
-
 

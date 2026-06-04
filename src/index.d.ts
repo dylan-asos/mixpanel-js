@@ -231,6 +231,7 @@ export interface Config {
   batch_requests: boolean;
   cdn: string;
   cookie_domain: string;
+  device_id: string | null;
   cross_site_cookie: boolean;
   cross_subdomain_cookie: boolean;
   error_reporter: (msg: string, err?: Error) => void;

@@ -60,6 +60,7 @@ var INIT_SNIPPET = 1;
 /** @const */ var PAYLOAD_TYPE_BASE64   = 'base64';
 /** @const */ var PAYLOAD_TYPE_JSON     = 'json';
 /** @const */ var DEVICE_ID_PREFIX      = '$device:';
+/** @const */ var UUID_FORMAT           = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /** @const */ var SETTING_STRICT        = 'strict';
 /** @const */ var SETTING_FALLBACK      = 'fallback';
 /** @const */ var SETTING_DISABLED      = 'disabled';
@@ -94,6 +95,10 @@ var DEFAULT_API_ROUTES = {
     'settings': 'settings/'
 };
 
+var isValidUUID = function(value) {
+    return _.isString(value) && UUID_FORMAT.test(value);
+};
+
 /*
  * Module-level globals
  */
@@ -110,6 +115,7 @@ var DEFAULT_CONFIG = {
     'cdn':                               'https://cdn.mxpnl.com',
     'cross_site_cookie':                 false,
     'cross_subdomain_cookie':            true,
+    'device_id':                         null,
     'error_reporter':                    NOOP_FUNC,
     'flags':                             false,
     'persistence':                       'cookie',
@@ -391,11 +397,22 @@ MixpanelLib.prototype._init = function(token, config, name) {
     this.unpersisted_superprops = {};
     this._gdpr_init();
 
-    var uuid = _.UUID();
-    if (!this.get_distinct_id()) {
+    var device_id = this.get_config('device_id');
+    if (device_id && !isValidUUID(device_id)) {
+        this.report_error('device_id must be a valid UUID');
+        device_id = null;
+    }
+
+    if (device_id) {
+        this.register({
+            'distinct_id': DEVICE_ID_PREFIX + device_id,
+            '$device_id': device_id
+        });
+    } else if (!this.get_distinct_id()) {
+        var uuid = _.UUID();
         // There is no need to set the distinct id
         // or the device id if something was already stored
-        // in the persitence
+        // in the persistence
         this.register_once({
             'distinct_id': DEVICE_ID_PREFIX + uuid,
             '$device_id': uuid
