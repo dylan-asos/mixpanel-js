@@ -19,6 +19,15 @@ describe(`Module-based loader in Node env`, function() {
     });
   });
 
+  it(`supports init() with custom device_id`, function() {
+    const instance = mixpanel.init(`test-token`, {
+      device_id: `server-device-id`,
+    }, `device-id-test-instance`);
+
+    instance.get_property(`$device_id`).should.equal(`server-device-id`);
+    instance.get_distinct_id().should.equal(`$device:server-device-id`);
+  });
+
   it(`supports identify()`, function() {
     mixpanel.identify(`Pat`);
   });
