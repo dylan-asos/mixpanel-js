@@ -402,7 +402,7 @@ MixpanelLib.prototype._init = function(token, config, name) {
         var uuid = _.UUID();
         // There is no need to set the distinct id
         // or the device id if something was already stored
-        // in the persitence
+        // in the persistence
         this.register_once({
             'distinct_id': DEVICE_ID_PREFIX + uuid,
             '$device_id': uuid
